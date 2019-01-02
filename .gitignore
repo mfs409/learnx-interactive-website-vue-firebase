@@ -1,0 +1,6 @@
+node_modules/
+public/
+.firebase/
+.firebaserc
+bundle.js
+src/config.ts

@@ -1,0 +1,59 @@
+// To send these rules to Firebase, without deploying the entire app, type:
+//       node_modules/.bin/firebase deploy --only storage:rules
+
+// If you are trying to build new features, and these rules are causing trouble,
+// you can replace the contents of this file with the following lines.
+// Be sure to remove the leading '//' characters.
+
+// service firebase.storage {
+//   match /b/{bucket}/o {
+//     match /{allPaths=**} {
+//       allow read, write: if request.auth!=null;
+//     }
+//   }
+// }
+
+// For our example app, we have a folder called "images", and we only want to
+// let people create documents in it, never update or delete documents.
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /images/{allPaths=**} {
+      // This rule allows logged-in users to read files
+      allow read: if request.auth.uid != null;
+      
+      // This rule says that logged-in users can create files, but not modify
+      // them
+      allow write: if request.auth.uid != null && request.resource.size > 0 && resource == null
+    }
+ 
+    match /private/{userId}/{allPaths=**} {
+      // This rule allows a user to read files in her private subfolder
+      allow read: if request.auth.uid == userId;
+      
+      // This rule allows a user to create (but not modify or delete) files in
+      // her private subfolder
+      allow write: if request.auth.uid != null && request.resource.size > 0 && resource == null
+      
+      // We would like for there to be a rule like this, to allow read access to
+      // administrators:
+
+      // allow read: if exists(/b/$(bucket)/o/admin/$(request.auth.uid));
+      
+      // Sadly, it doesn't work.  We can't set the storage permissions on one
+      // object based on the presence of another object in the storage system.
+      // So we have to choose... do we protect private files just through
+      // "obscurity", and let the administrator see them, or do we truly protect
+      // files, and only let the administrator see them through the firebase
+      // console?  Since this 'match' is in this file, we have clearly chosen
+      // the latter
+    }
+
+    match /admin/{allPaths=**} {
+      // Forbid access to the admin folder, except from the firebase web
+      // console.  Note that this rule is not meaningful, since we can't have
+      // the fine-grained permission described above.
+    	allow read, write: if false;
+    }
+  }
+}

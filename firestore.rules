@@ -1,0 +1,91 @@
+// To send these rules to Firebase, without deploying the entire app, type:
+//       node_modules/.bin/firebase deploy --only firestore:rules
+
+// If you are trying to build new features, and these rules are causing trouble,
+// you can replace the contents of this file with the following lines.
+// Be sure to remove the leading '//' characters.
+
+// service cloud.firestore {
+//   match /databases/{database}/documents {
+//     match /{document=**} {
+//       // allow read, write;
+//       allow read, write: if request.auth.uid != null;
+//     }
+//   }
+// }
+
+// For our live example app, these are the security rules.  Their purpose is to
+// make sure that users can only access the data for which they have permission.
+// Note that these rules are only for data, not for file permissions.  Those are
+// defined in the 'storage.rules' file.
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // To make sure that every file has a unique name, we have a document called
+    // 'files' that holds a collection of unique IDs.  Each user can create IDs
+    // in her own sub-collection of that document.
+    match /files/{userId} {
+      // This part says "you can make a collection with your userId"
+      allow read, create: if request.auth.uid == userId;
+      match /ids/{document=**} {
+        // This part says "you can make documents inside of a collection only if
+        // the collection matches your userId."  Technically this means people 
+        // can hack the system to put *arbitrary* data in their collection, but
+        // since any such data would be private, and since an administrator
+        // could immediately figure out who was being malicious, we aren't going
+        // to lock this down any further.
+        allow read, write: if request.auth.uid == userId;
+      }
+    }
+
+    // One section of the app is for public documents.  Those are documents that
+    // anyone can create, anyone can read, but only the creator can update or
+    // delete.  They are each defined as a collection within the 'public'
+    // document.
+    match /public/{document=**} {
+      // This part says "if you are logged in, you can read and create public
+      // docs"
+      allow read, create: if request.auth.uid != null;
+      
+      // This part says "you can delete and update only if you created the doc"
+      allow update, delete: if resource.data.creator == request.auth.uid;
+      
+      // This gives administrators full access to all public documents
+      allow read, write: if exists(/databases/$(database)/documents/admin/$(request.auth.uid));
+    }
+
+    // The next section is for private documents.  Those documents are only
+    // visible to the person who created them, and to administrators.  They are
+    // all collections of the 'private' document.
+    match /private/{userId}/{document=**} {
+      // This part gives the owner of the document full access
+      allow read, write: if request.auth.uid == userId;
+      
+      // This part gives the administrator full access
+      allow read, write: if exists(/databases/$(database)/documents/admin/$(request.auth.uid));
+    }
+
+    // The feedback document allows users to create collections within the
+    // 'feedback' document.  Only administrators can read the feedback, and they
+    // can also modify and delete it.
+    match /feedback/{document=**} {
+      // This part lets users create feedback
+      allow create: if request.auth.uid != null
+
+      // This part lets administrators have full access
+      allow read, write: if exists(/databases/$(database)/documents/admin/$(request.auth.uid));
+    }
+
+    // The 'admin' document has a listing of all the users who have
+    // administrative access.  The web interface allows reading this, but not
+    // editing it.  To manage administrator permissions, you need to use the
+    // firebase web console.
+    match /admin/{userId} {
+      // This says "you can only read your own document, if it exists".  That
+      // means that non-admin users can't see anything, and admins can only see
+      // themselves.
+      allow read: if request.auth.uid == userId;
+    }
+  }
+}
