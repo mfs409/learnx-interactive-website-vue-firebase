@@ -14,26 +14,6 @@ import 'firebase/auth';
 import config from "./config";
 import { Routes } from "./router";
 
-/**
- * TODO: remove this comment once the last parts are done
- * 
- * The data model will look like this:
- * /public/{Id} will be for storing public entries
- *   -- an entry consists of subject, message, creator, timestamp
- * /files/{userId}/ids/{Id} will be for storing the IDs of a user's files
- *   -- an entry consists of an ID, and that's it
- * /private/{userId}/privatedocs/{Id} will be for storing private entries
- *   -- an entry consists of subject, message, file, creator, timestamp, and state
- *   -- state is either "temp" or "done"
- * /admin/{Id} will be for storing the UserIds of administrators
- *   -- Just a userid, that's it
- * /feedback/{Id} will be for storing feedback from users
- *   -- an entry consists of creator, timestamp, and message
- *
- * Status
- * /feedback isn't set up, but permissions are
- */
-
 export default class AppState {
     /** The firebase cloud firestore "database" object */
     private db: firebase.firestore.Firestore = null;
