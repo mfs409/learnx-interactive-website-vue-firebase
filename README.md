@@ -63,7 +63,7 @@ responsible for showing data to the user, and getting commands from the user.
 Another important component is the "back end".  It is responsible for storing
 data, and preventing unauthorized access to that data.
 
-You may be thinking "why do we need two (or more) parts?"  Rather thank answer
+You may be thinking "why do we need two (or more) parts?"  Rather than answer
 that question, I encourage you to think about what would happen if the data you
 put into your favorite social network was stored on the device you used to enter
 that data.  If you entered something from your phone, would all of your contacts
