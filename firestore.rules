@@ -1,5 +1,7 @@
 // To send these rules to Firebase, without deploying the entire app, type:
-//       node_modules/.bin/firebase deploy --only firestore:rules
+//       npx firebase deploy --only firestore:rules
+
+rules_version = '2';
 
 // If you are trying to build new features, and these rules are causing trouble,
 // you can replace the contents of this file with the following lines.
@@ -21,6 +23,32 @@
 
 service cloud.firestore {
   match /databases/{database}/documents {
+    // One section of the app is for public documents.  Those are documents that
+    // anyone can create, anyone can read, but only the creator can update or
+    // delete.  They are each defined as a collection within the 'public'
+    // document.
+    match /public/{document=**} {
+      // This part says "if you are logged in, you can read and create public
+      // docs"
+      allow read, create: if request.auth.uid != null;
+
+      // This part says "you can delete and update only if you created the doc"
+      allow update, delete: if resource.data.creator == request.auth.uid;
+
+      // This gives administrators full access to all public documents
+      allow read, write: if exists(/databases/$(database)/documents/admin/$(request.auth.uid));
+    }
+
+    // The 'admin' document has a listing of all the users who have
+    // administrative access.  The web interface allows reading this, but not
+    // editing it.  To manage administrator permissions, you need to use the
+    // firebase web console.
+    match /admin/{userId} {
+      // This says "you can only read your own document, if it exists".  That
+      // means that non-admin users can't see anything, and admins can only see
+      // themselves.
+      allow read: if request.auth.uid == userId;
+    }
 
     // To make sure that every file has a unique name, we have a document called
     // 'files' that holds a collection of unique IDs.  Each user can create IDs
@@ -37,22 +65,6 @@ service cloud.firestore {
         // to lock this down any further.
         allow read, write: if request.auth.uid == userId;
       }
-    }
-
-    // One section of the app is for public documents.  Those are documents that
-    // anyone can create, anyone can read, but only the creator can update or
-    // delete.  They are each defined as a collection within the 'public'
-    // document.
-    match /public/{document=**} {
-      // This part says "if you are logged in, you can read and create public
-      // docs"
-      allow read, create: if request.auth.uid != null;
-      
-      // This part says "you can delete and update only if you created the doc"
-      allow update, delete: if resource.data.creator == request.auth.uid;
-      
-      // This gives administrators full access to all public documents
-      allow read, write: if exists(/databases/$(database)/documents/admin/$(request.auth.uid));
     }
 
     // The next section is for private documents.  Those documents are only
@@ -75,17 +87,8 @@ service cloud.firestore {
 
       // This part lets administrators have full access
       allow read, write: if exists(/databases/$(database)/documents/admin/$(request.auth.uid));
-    }
-
-    // The 'admin' document has a listing of all the users who have
-    // administrative access.  The web interface allows reading this, but not
-    // editing it.  To manage administrator permissions, you need to use the
-    // firebase web console.
-    match /admin/{userId} {
-      // This says "you can only read your own document, if it exists".  That
-      // means that non-admin users can't see anything, and admins can only see
-      // themselves.
-      allow read: if request.auth.uid == userId;
-    }
+    }  
   }
 }
+
+

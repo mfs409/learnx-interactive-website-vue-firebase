@@ -17,23 +17,23 @@ You may be thinking "why not an app?"  There are a few reasons:
 - You need a lot more software on your computer to make an app
 - You can't make an iOS app unless you own a Mac
 - Many people don't want to install yet another app on their phone
-- You could actually use [Apache Cordova](https://cordova.apache.org/) to turn
-  the website you make in this LearnX into an app, without writing any more
-  code, so it seems more valuable to learn how to make the website than to focus
-  on making an app.
+- You could use [Apache Cordova](https://cordova.apache.org/) to turn the
+  website you make in this LearnX into an app, without writing any more code, so
+  it seems more valuable to learn how to make the website than to focus on
+  making an app.
 
 ## Technologies We Will Use
 
-Since we are making a website, we will of course be using standard web
+Since we are making a website, at a minimum we will need to use standard web
 technologies: HTML, CSS, and JavaScript (well, technically we are using
 [TypeScript](https://www.typescriptlang.org/)).  In addition, we will be using
 the following third-party libraries and services:
 
-- [Firebase](https://firebase.google.com/) &mdash; Firebase is a Google product that
-  provides data and file storage, as well as website hosting.
+- [Firebase](https://firebase.google.com/) &mdash; Firebase is a Google product
+  that provides data and file storage, as well as website hosting.
 - [Vue.js](https://vuejs.org/) &mdash; Vue.js is a web framework that makes it
-  easy to create single-page progressive web apps.  If that doesn't make sense,
-  just think "do more with less code".
+  easy to create single-page web apps.  If that doesn't make sense, just think
+  "do more with less code".
 - [W3.css](https://www.w3schools.com/w3css/) &mdash; W3.css is a mobile-friendly
   stylesheet for making websites that look good.
 
@@ -63,9 +63,9 @@ responsible for showing data to the user, and getting commands from the user.
 Another important component is the "back end".  It is responsible for storing
 data, and preventing unauthorized access to that data.
 
-You may be thinking "why do we need two (or more) parts?"  Rather than answer
-that question, I encourage you to think about what would happen if the data you
-put into your favorite social network was stored on the device you used to enter
+You may be thinking "why do we need two (or more) parts?"  To answer that
+question, I encourage you to think about what would happen if the data you put
+into your favorite social network was stored on the device you used to enter
 that data.  If you entered something from your phone, would all of your contacts
 only see it when your phone was on?  What if you got a new phone?  What if you
 had to connect from your laptop, because your phone was out of battery?  There's
@@ -128,7 +128,6 @@ Inside of `/src`, you will see the following files:
 - appstate.ts &mdash; The main code for the website
 - main.ts &mdash; Code for starting up the website
 - router.ts &mdash; Code for managing navigation among components
-- vue-shims.d.ts &mdash; Ignore this file :)
 
 Inside of `/src/components`, you will see the following files:
 
@@ -136,9 +135,9 @@ Inside of `/src/components`, you will see the following files:
 - CreatePrivate.vue &mdash; A component for creating private posts
 - CreatePublic.vue &mdash; A component for creating public posts
 - Error.vue &mdash; A component for showing error messages
-- Feedack.vue &mdash; A component for managing feedback to the website owner
+- Feedback.vue &mdash; A component for managing feedback to the website owner
 - Info.vue &mdash; A component for showing informational messages
-- Login.vue &mdash; A component for logging in
+- LogIn.vue &mdash; A component for logging in
 - Menu.vue &mdash; A menu component
 - ReadAllPrivate.vue &mdash; A component for showing all of a user's private
   posts
@@ -149,17 +148,17 @@ Inside of `/src/components`, you will see the following files:
 In the root folder (`/`), you will see the following files:
 
 - .gitignore &mdash; A configuration file for git
+- env.d.ts &mdash A configuration file for vue
 - firebase.json &mdash; Configuration for Firebase
-- firestore.indexex.json &mdash; Configuration for the Firebase database
+- firestore.indexes.json &mdash; Configuration for the Firebase database
 - firestore.rules &mdash; Security rules for the Firebase database
 - index.html &mdash; The main web page for our website
-- launch.sh &mdash; Code to help deploy our website to Firebase
 - package-lock.json &mdash; Configuration for the libraries used by our website
 - package.json &mdash; Configuration for the libraries used by our website
 - README.md &mdash; This file
 - storage.rules &mdash; Security rules for the Firebase file storage
 - tsconfig.json &mdash; Configuration rules for the TypeScript compiler
-- webpack.config.json &mdash; Configuration for testing our program
+- vite.config.json &mdash; Configuration for building and running our web app
 
 For the most part, you can ignore everything in the root folder.
 
@@ -195,20 +194,49 @@ there should be a gear to the right of "Project Overview".  Click it and choose
 "Project settings".  In the "General" tab, there will be a section that says
 "Your apps".  Click "Add Firebase to your web app".  You will see a pop-up that
 contains some code.  Copy from `{` through `};`.  Then in your `src/` folder,
-create a file called `config.ts`.  Type `export default` and then paste the code
-that you copied from the web.
+create a file called `fbconfig.ts`.  Type `export const config =` and then paste
+the code that you copied from the web.
 
 ## Starting the Code
 
-Enter into the `learnx-interactive-website-vue-firebase` folder by typing `cd
-learnx-interactive-website-vue-firebase`.  Then type `npm install` to get all of
-the libraries needed by our program.  
+Normally, when you download web code from GitHub, you install it by going into
+the folder where the code is and typing `npm install`.  Let's do that here. Open
+a terminal, navigate to the folder where this file is (typically by typing
+something like `cd learnx-interactive-website-vue-firebase`), and then type `npm
+install`.  All of the libraries needed by our program will get installed into a
+folder called `node_modules`.
 
-Finally, type `npm start`.  You should see a bunch of messages fly by, ending
-with 'Compiled successfully'.
+Actually, not quite.  There is still one library that we need.  Edit your
+`package.json` file and find this line:
+
+```json
+"npm-run-all": "^4.1.5",
+```
+
+Put this line right after it:
+
+```json
+"firebase-tools": "^11.20.0",
+```
+
+Then go back to your terminal and type `npm install` again.  This will download
+**a lot** more code, and it will also probably tell you about some security
+warnings.  "firebase-tools" will only run on your computer, so these security
+issues can probably be ignored.  But since they are real security warnings, I
+didn't want them baked into the default code for this LearnX.
+
+Now type `npm run dev`.  You should see something like this:
+
+```bash
+ VITE v4.0.4  ready in 341 ms
+
+  ➜  Local:   http://localhost:5173/
+  ➜  Network: use --host to expose
+  ➜  press h to show help
+```
 
 At this point, open your web browser and visit
-[http://localhost:8080](http://localhost:8080).  You will see a message saying
+[http://localhost:5173](http://localhost:5173).  You will see a message saying
 that you need to log in.  You can click "Log In", and then authenticate using
 your Google account.  The whole website is up and running on your computer.
 Every time you edit the code, the site will auto-refresh with the latest
@@ -248,19 +276,19 @@ Right now, your website can only be seen from your own computer, using a
 "localhost" address.  It would be nice, of course, to let other people use your
 site.  We can do this through Firebase hosting.  From a terminal, navigate to
 your `learnx-interactive-website-vue-firebase` folder, and log into Firebase by
-typing `.\node_modules\.bin\firebase login`.  This will open up a web browser so
-that you can authenticate with Google.  Once you have authenticated, you should
-see a message in the terminal such as `+  Success! logged in as
-abc123@gmail.com`. You can type `.\node_modules\.bin\firebase list` to see all
-of your Firebase projects, and `.\node_modules\.bin\firebase use
-your-project-name` to select a specific project.  When you are done working on
-your project, you can type `.\node_modules\.bin\firebase logout` to log out.
+typing `npx firebase login`.  This will open up a web browser so that you can
+authenticate with Google.  Once you have authenticated, you should see a message
+in the terminal such as `+  Success! logged in as abc123@gmail.com`. You can
+type `npx firebase projects:list` to see all of your Firebase projects, and `npx
+firebase use your-project-name` to select a specific project.  When you are done
+working on your project, you can type `npx firebase logout` to log out.
 
-When you are logged in and your project is selected, you could type
-`.\node_modules\.bin\firebase deploy` to launch your code on the web.  However,
-first we have to produce a version of the code that is appropriate for the web.
-To do that, and also deploy, type `npm run deploy`.  When the command completes,
-you will see a message like `+  Deploy complete!`, followed by a "Hosting URL",
+When you are logged in and your project is selected, you could type `npx
+firebase deploy` to launch your code on the web.  However, first we have to
+produce a version of the code that is appropriate for the web. To do that,  type
+`npm run build`.  When the command completes, you will have a folder called
+`dist`, with a ready-to-deploy version of the web app.  Then type `npx firebase
+deploy`.  see a message like `+ Deploy complete!`, followed by a "Hosting URL",
 which is the world-readable link to your website.  In addition to putting your
 code online, the command will also set permissions, so that your data is secure.
 
@@ -275,19 +303,18 @@ why:
 2. `index.html` says to include the file `bundle.js`
 3. `bundle.js` is a single file that contains all of our .vue and .ts files
 4. `bundle.js` starts with the code in `main.ts`, which says to create a router
-   object from `router.ts` and a stat object from `appstate.ts`, and then to
+   object from `router.ts` and a state object from `appstate.ts`, and then to
    find the HTML DIV tag with an id of `app`, and to put our `App.vue` into it.
 5. The `App.vue` file will put a `Menu.vue`, `Error.vue`, and `Info.vue` into
    the web page.  It will also put a "router-view" into the page, as a
    placeholder for other components that the router decides should go into the
-   page.  It will also hold on to the `appstate` object as `state`.
-6. The appstate object will call its `constructor` code, which will load the
-   configuration from `config.ts`, connect to firebase, and then check if the
-   user is logged in.  It does this via its `initialCheckLogin` function, which
-   will decide that the user is not logged in, and thus it will tell the router
-   to switch to the logIn route.
-7. The router will put the `Login.vue` component into the page.
-8. The `Login.vue` will just display some HTML, and won't do anything else until
+   page.
+6. The appstate object will load the configuration from `fbconfig.ts`, connect
+   to firebase, and then check if the user is logged in.  It does this via its
+   `initialCheckLogin` function, which will decide that the user is not logged
+   in, and thus it will tell the router to switch to the LogIn route.
+7. The router will put the `LogIn.vue` component into the page.
+8. The `LogIn.vue` will just display some HTML, and won't do anything else until
    the user clicks "Log In".
 
 That's a lot of interaction between components.  But the good news is, that's
@@ -296,7 +323,7 @@ it!
 
 Next, let's look at what happens when you click "Log In":
 
-- The `login` code in `Login.vue` will run.  It will call the `logIn` code in
+- The `login` code in `LogIn.vue` will run.  It will call the `logIn` code in
   `appstate.ts`.
 - The `logIn` code in `appstate.ts` will redirect the browser to Google.
 - When Google redirects back to our webpage, *the whole process from up above
@@ -306,27 +333,26 @@ Next, let's look at what happens when you click "Log In":
   save the user's name and other information.  Then it will check if the address
   bar is currently the page for logging in.  If so, it will tell the router to
   go to the page for showing all public messages.
-- The router will remove `Login.vue` from the "router-view", and it will put
+- The router will remove `LogIn.vue` from the "router-view", and it will put
   `ReadAllPublic.vue` into the "router-view".
 - The `Menu.vue` will notice that there is a logged in user, so it will un-hide
   itself.
-- `ReadAllPublic.vue` will see that it is "mounted", and will use its `mount`
-  method to (through its `$parent.state`, which is `App.vue`'s state) ask
-  `appstate.ts` to call `readallPublicDoc`.  That will cause Firebase to get all
-  of the data in the `public` folder of Cloud Firestore for our project, and
-  return it.  When `readallPublicDoc` receives the data, it will automatically
-  (courtesy of how we are using Vue.js) populate its list (the UL tag) with one
-  row per object returned from Firebase.
+- `ReadAllPublic.vue` will ask `appstate.ts` to call `readallPublicDoc`.  That
+  will cause Firebase to get all of the data in the `public` folder of Cloud
+  Firestore for our project, and return it.  When `readallPublicDoc` receives
+  the data, it will automatically (courtesy of how we are using Vue.js) populate
+  its list (the UL tag) with one row per object returned from Firebase.
 
-Of course, right now there isn't any data, so the page is a bit bland.  Let's add data by clicking on the "Create Public" button.  When we click the button:
+Of course, right now there isn't any data, so the page is a bit bland.  Let's
+add data by clicking on the "Create Public" button.  When we click the button:
 
 - The `Menu.vue` component calls its `createPublic` function, which causes the
   router to load the `CreatePublic.vue` component into `App.vue`'s
   "router-view".
 - Since `Menu.vue` doesn't need to do any initialization, that's all that
-  happens.  There's no `mount` function like in `ReadAllPublic.vue`.
+  happens.  There's no data fetching like in `ReadAllPublic.vue`.
 
-So far, so good.  Notice that `CreatePublic.vue` has a `data` method, which
+So far, so good.  Notice that `CreatePublic.vue` has a `reactive` method, which
 creates a few variables that are used by Vue.js to keep track of the input boxes
 within the component.  If all we cared about was a subject and message, then
 `CreatePublic.vue` would be pretty simple.  But we also have file uploads, and
@@ -336,7 +362,7 @@ button:
 - `createMessage` gets called.  It checks that the subject and message aren't
   blank, and the file box has a file.
 - `createMessage` needs a unique name for the file.  To do this, it calls
-  `appstate.ts`'s getFileId code, which *inserts* a new, empty sub document into
+  `appstate.ts`'s `getFileId` code, which *inserts* a new, empty sub document into
   the `files` document of Cloud Firestore.  The document name will be
   `/files/userId/ids/XXX`, where `userId` is the Id of the logged-in user, and
   `XXX` is guaranteed by Firebase to be unique.  
@@ -359,7 +385,7 @@ your own public posts.  At this point, you should be able to figure out the flow
 among `ReadAllPublic.vue`, `router.ts`, `ReadOnePublic.vue`, and `appstate.ts`,
 so that you can explain how viewing and editing an individual post works.
 (Note: there's one tricky part: the Id of the post (`ZZZ above`) is part of the
-route, and is passed to `ReadOnePublic.vue` as `$attrs.id`.)
+route, and is passed to `ReadOnePublic.vue` as `useRoute().params.id`.)
 
 Before moving on, note that it is a bad idea to rely on your UI (i.e., the code
 in your components) to enforce security.  If we want data to be protected from
@@ -418,7 +444,7 @@ where `ZZZ` is a unique name for the file.
 You should be able to figure out how `ReadOnePrivate.vue`,`ReadAllPrivate.vue`,
 `CreatePrivate.vue`, `Menu.vue`, `appstate.ts`, and `router.ts` work together to
 support private messages.  When you do, you'll notice that the code is almost
-identical for public and private messages, and I started by copying and pasting.
+identical for public and private messages.  I copied and pasted :(.
 
 In general, it's bad to copy and paste code within the same project... it means
 you're duplicating effort, instead of making your code more general.  I did it
@@ -427,8 +453,8 @@ code, you shouldn't copy and paste.  The first reason is that, when you find
 bugs, you will have to remember all the copies of the bug.  That's hard.  The
 second is that it becomes very easy to have hard-to-find bugs related to subtle
 differences in the constant strings (things between quotation marks) used by the
-code.  For example, when copying and pasting, I missed the fact that I used
-"/public" to save a file that should have gone to "/private".
+code.  For example, when copying and pasting, I almost missed the fact that I
+used "/public" to save a file that should have gone to "/private".
 
 One of the best ways to avoid these errors with constants is to turn them into
 variables.  For example, in `appstate.ts`, you will see that all of the document
@@ -538,7 +564,8 @@ It would be wonderful if all of the above rules translated directly to Firebase
 Storage.  Unfortunately, they don't: Firebase Storage does not allow security
 based on file contents, or based on extra queries.  We can only get security via
 the "userId in path" technique.  If you look at `storage.rules`, you will see
-examples.  In particular, you will see that any logged in user can read any public file, but even administrators cannot see private files via the website.
+examples.  In particular, you will see that any logged in user can read any
+public file, but even administrators cannot see private files via the website.
 
 Note that we could have a slightly less secure system via "security through
 obscurity", in which the private files were only private because their names are
@@ -555,7 +582,8 @@ show an informational message or error message, we can un-hide one of these, and
 set its message field.  As an example, consider the "Info" button on the menu.
 When it is clicked:
 
-- `info` in `Menu.vue` is called.  It calls `infoShow` in `appstate.ts`, to set the contents of the message.
+- `info` in `Menu.vue` is called.  It calls `infoShow` in `appstate.ts`, to set
+  the contents of the message.
 - `infoShow` also sets `info.show` to `true`.
 - `Info.vue` notices that `info.show` changed, so it un-hides itself.
 
@@ -584,13 +612,12 @@ There are two important things to keep in mind as you move forward:
 
 - When you are done developing, and ready to make your website "live", there is
   one additional security step you should take.  In the Firebase web console,
-  select "Authentication", pick "Sign-in method", and delete "localhost" from
-  "Authorized domains".  This will make it harder for a user to hack into your
-  system.
+  select "Authentication", pick "Settings", and delete "localhost" from
+  "Authorized domains".  This will make it harder for a user to hack your data.
 
 - If you are going to store your code online (e.g., in Github), make sure that
   you do not check in any private/secret data.  For example, you should not put
-  your `config.ts` file online.  There is a file called `.gitignore`, which
+  your `fbconfig.ts` file online.  There is a file called `.gitignore`, which
   should help to prevent certain files from going online.  Make sure you use it
   correctly!
 

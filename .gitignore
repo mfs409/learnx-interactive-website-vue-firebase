@@ -3,4 +3,7 @@ public/
 .firebase/
 .firebaserc
 bundle.js
-src/config.ts
+src/fbconfig.ts
+.vscode/
+dist/
+tsconfig.tsbuildinfo

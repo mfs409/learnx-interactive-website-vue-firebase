@@ -1,5 +1,7 @@
 // To send these rules to Firebase, without deploying the entire app, type:
-//       node_modules/.bin/firebase deploy --only storage:rules
+//       npx firebase deploy --only storage
+
+rules_version = '2';
 
 // If you are trying to build new features, and these rules are causing trouble,
 // you can replace the contents of this file with the following lines.
@@ -21,7 +23,7 @@ service firebase.storage {
     match /images/{allPaths=**} {
       // This rule allows logged-in users to read files
       allow read: if request.auth.uid != null;
-      
+
       // This rule says that logged-in users can create files, but not modify
       // them
       allow write: if request.auth.uid != null && request.resource.size > 0 && resource == null

@@ -2,27 +2,30 @@
   "name": "learnx-web-technologies",
   "version": "0.0.1",
   "description": "A Lehigh LearnX about developing globally-available web apps with Firebase",
-  "devDependencies": {
-    "css-loader": "^2.1.0",
-    "firebase": "^5.7.1",
-    "firebase-tools": "^6.2.2",
-    "ts-loader": "^5.3.2",
-    "typescript": "^3.2.2",
-    "vue": "^2.5.21",
-    "vue-loader": "^15.4.2",
-    "vue-router": "^3.0.2",
-    "vue-template-compiler": "^2.5.21",
-    "w3-css": "^4.1.0",
-    "webpack": "^4.28.2",
-    "webpack-cli": "^3.1.2",
-    "webpack-dev-server": "^3.1.14"
-  },
-  "scripts": {
-    "start": "webpack-dev-server",
-    "test": "echo \"no tests yet\" && exit 1",
-    "prod": "webpack-cli --mode production",
-    "deploy": "sh launch.sh && firebase deploy"
-  },
+  "private": true,
   "author": "Michael Spear",
-  "license": "MIT"
+  "license": "MIT",
+  "scripts": {
+    "dev": "vite",
+    "build": "run-p type-check build-only",
+    "preview": "vite preview",
+    "build-only": "vite build",
+    "type-check": "vue-tsc --noEmit"
+  },
+  "dependencies": {
+    "firebase": "^9.15.0",
+    "pinia": "^2.0.28",
+    "vue": "^3.2.45",
+    "vue-router": "^4.1.6"
+  },
+  "devDependencies": {
+    "@types/node": "^18.11.12",
+    "@vitejs/plugin-vue": "^4.0.0",
+    "@vue/tsconfig": "^0.1.3",
+    "npm-run-all": "^4.1.5",
+    "typescript": "~4.7.4",
+    "vite": "^4.0.0",
+    "vue-tsc": "^1.0.12",
+    "w3-css": "^4.1.0"
+  }
 }

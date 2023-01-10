@@ -2,26 +2,24 @@
 // framework, the only purpose of this file is to set up Vue and connect the
 // parts of our program to it.
 
-import Vue from "vue";
+import { createApp } from 'vue'
+import { createPinia } from 'pinia'
 import 'w3-css/w3.css';
-import router from './router';
-import AppState from "./appstate";
-import AppComponent from './components/App.vue';
 
-// Hide the production vs. developer note for Vue
-Vue.config.productionTip = false;
+import { Router } from '@/router'
+import { initialCheckLogin } from './appstate';
+import App from '@/components/App.vue'
 
-new Vue({
-    // The identity of the main <div> in index.html 
-    el: "#app",
-    // The "router"... see ./router.ts
-    router,
-    // The component to put into #app is the one we imported as AppComponent
-    components: { AppComponent },
-    // When we create AppComponent, it will need an AppState object for storing
-    // all of the global application state.
-    data: { state: new AppState(router) },
-    // This line actually puts the AppComponent into the web page, and connects
-    // it to the AppState.
-    template: '<AppComponent :state="state" />'
-}).$mount('#app');
+// Indicate that "App.vue" is the main component of our web app
+const app = createApp(App)
+
+// Set up the app to use pinia for global state management, and the router we
+// define in ./router
+app.use(createPinia())
+app.use(Router)
+
+// Put our app into the web page inside the div with id == "app"
+app.mount('#app')
+
+// Check if we're already logged in from the last time the page was visited
+initialCheckLogin()
