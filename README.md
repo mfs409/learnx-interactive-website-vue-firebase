@@ -259,7 +259,9 @@ features:
 - A site administrator mechanism, so that users who are also administrators are
   able to edit and delete **all public and private** messages.  Note that due to
   a limitation of how Firebase lets us manage security, administrators cannot
-  view private images through the website.
+  view private images through the website.  Also, note that right now, uploaded
+  images are never deleted.  You'll need to do this manually through the
+  Firebase console.
 
 There are three different *types* of files that let us do this.  `.vue` files
 describe a visual component that is part of the website.  They have some HTML to
