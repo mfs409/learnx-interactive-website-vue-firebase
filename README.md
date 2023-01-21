@@ -206,25 +206,6 @@ something like `cd learnx-interactive-website-vue-firebase`), and then type `npm
 install`.  All of the libraries needed by our program will get installed into a
 folder called `node_modules`.
 
-Actually, not quite.  There is still one library that we need.  Edit your
-`package.json` file and find this line:
-
-```json
-"npm-run-all": "^4.1.5",
-```
-
-Put this line right after it:
-
-```json
-"firebase-tools": "^11.20.0",
-```
-
-Then go back to your terminal and type `npm install` again.  This will download
-**a lot** more code, and it will also probably tell you about some security
-warnings.  "firebase-tools" will only run on your computer, so these security
-issues can probably be ignored.  But since they are real security warnings, I
-didn't want them baked into the default code for this LearnX.
-
 Now type `npm run dev`.  You should see something like this:
 
 ```bash
