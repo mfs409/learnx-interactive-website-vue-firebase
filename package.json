@@ -24,7 +24,7 @@
     "@types/node": "^22.13.4",
     "@vitejs/plugin-vue": "^5.2.1",
     "@vue/tsconfig": "^0.7.0",
-    "firebase-tools": "^13.32.0",
+    "firebase-tools": "^14.11.2",
     "npm-run-all2": "^7.0.2",
     "typescript": "~5.7.3",
     "vite": "^6.4.1",
